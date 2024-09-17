@@ -1,5 +1,7 @@
 
 
+using CatalogAPI.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to container
@@ -10,13 +12,20 @@ builder.Services.AddMediatR(conf =>
     {
         conf.RegisterServicesFromAssembly(assembly);
         conf.AddOpenBehavior(typeof(ValidationBehaviors<,>));
+        conf.AddOpenBehavior(typeof(LoggingBehavior<,>));
     });
 
 builder.Services.AddValidatorsFromAssembly(assembly)
     .AddMarten(opts => 
     {
         opts.Connection(builder.Configuration.GetConnectionString("Database")!);
-    }).UseLightweightSessions();
+    })
+    .UseLightweightSessions();
+
+if(builder.Environment.IsDevelopment()) 
+{
+    builder.Services.InitializeMartenWith<CatalogInitialData>();
+}
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
@@ -29,5 +38,4 @@ app.MapCarter();
 app.UseExceptionHandler(opt => { });
 
 // Build
-
 app.Run();

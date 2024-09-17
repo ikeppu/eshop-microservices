@@ -5,7 +5,7 @@ namespace CatalogAPI.Products.GetProductById
     public record GetProductsByIdQuery(Guid Id) : IQuery<GetProductByIdResult>;
     public record GetProductByIdResult(Product Product);
     internal class GetProductByIdQueryHandler
-        (IDocumentSession session, ILogger<GetProductByIdQueryHandler> logger)
+        (IDocumentSession session)
         : IQueryHandler<GetProductsByIdQuery, GetProductByIdResult>
     {
         public async Task<GetProductByIdResult> Handle(GetProductsByIdQuery query, CancellationToken cancellationToken)
